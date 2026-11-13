@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тестовое задание для Елены</title>
+  <!-- base нужен, чтобы стили и скрипты грузились и по адресу /task/42.
+       Локально сайт лежит в корне (/), на GitHub Pages — в папке репозитория (/имя-репозитория/). -->
+  <script>
+    (function () {
+      var ROUTES = ['board', 'list', 'task', 'employees', 'help', 'index.html', ''];
+      var first = location.pathname.split('/')[1] || '';
+      var base = /\.github\.io$/.test(location.hostname) && ROUTES.indexOf(first) === -1 ? '/' + first + '/' : '/';
+      document.write('<base href="' + base + '">');
+      // Возврат с 404.html на GitHub Pages: ?p=/task/42 превращаем обратно в адрес /task/42
+      var p = new URLSearchParams(location.search).get('p');
+      if (p) history.replaceState(null, '', base.replace(/\/$/, '') + p + location.hash);
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">✓ <span>Тестовое задание для Елены</span></div>
+    <nav class="topnav" aria-label="Разделы">
+      <a href="board" data-page="tasks">Задачи</a>
+      <a href="employees" data-page="employees">Сотрудники</a>
+    </nav>
+    <div class="topbar-right">
+      <a id="help-btn" href="help" class="help-btn" title="Справка" aria-label="Справка"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></a>
+      <div id="user-box" class="user-box"></div>
+    </div>
+  </header>
+
+  <section class="board-head">
+    <div class="board-head-title">
+      <h1 id="page-title">Задачи</h1>
+    </div>
+    <div class="toolbar">
+      <div class="filter-wrap">
+        <button id="filters-btn" type="button" class="secondary filters-btn" aria-expanded="false">Фильтры <span id="filters-count" class="filters-count" hidden></span></button>
+        <div id="filters-panel" class="filters-panel" hidden>
+          <div class="filters-panel-head">
+            <span>Исполнитель</span>
+            <button id="filters-reset" type="button" class="link-btn">Сбросить</button>
+          </div>
+          <div id="assignee-options" class="assignee-options"></div>
+        </div>
+      </div>
+      <input id="search" class="search" type="search" placeholder="Поиск по задачам" aria-label="Поиск по задачам">
+      <div class="view-switch" role="group" aria-label="Вид">
+        <button type="button" data-view="kanban">Доска</button>
+        <button type="button" data-view="list">Список</button>
+      </div>
+    </div>
+    <button id="add-btn" type="button" class="primary" aria-label="Добавить новую задачу">
+      <span class="add-label-full">+ Добавить новую задачу</span>
+      <span class="add-label-short">+ Задача</span>
+    </button>
+  </section>
+
+  <div id="layout" class="layout">
+    <main id="main" class="main"></main>
+    <aside id="details" class="details" hidden></aside>
+  </div>
+
+  <dialog id="add-dialog" class="dialog">
+    <form id="add-form" method="dialog" novalidate>
+      <h2>Новая задача</h2>
+      <label>Название *
+        <input id="add-title" type="text" maxlength="200" autocomplete="off" required>
+      </label>
+      <label>Описание
+        <textarea id="add-desc" rows="4" placeholder="Необязательно"></textarea>
+      </label>
+      <div class="form-grid">
+        <label>Дата начала
+          <input id="add-start" type="date">
+        </label>
+        <label>Дата окончания
+          <input id="add-end" type="date">
+        </label>
+      </div>
+      <label>Исполнитель
+        <select id="add-assignee" class="assignee-select"></select>
+      </label>
+      <div class="field">
+        <span class="field-title">Файлы</span>
+        <label id="add-drop" class="dropzone">
+          <input id="add-files" type="file" multiple hidden>
+          Перетащите файлы сюда или <u>выберите на компьютере</u>
+          <small>до 2 МБ на файл, хранятся в браузере</small>
+        </label>
+        <ul id="add-file-list" class="file-list"></ul>
+      </div>
+      <p id="add-error" class="form-error"></p>
+      <div class="dialog-actions">
+        <button type="button" id="add-cancel" class="secondary">Отмена</button>
+        <button type="submit" class="primary">Создать</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="emp-dialog" class="dialog">
+    <form id="emp-form" method="dialog" novalidate>
+      <h2 id="emp-title">Новый сотрудник</h2>
+      <div class="form-grid">
+        <label>Имя *<input id="emp-first" maxlength="50" autocomplete="off"></label>
+        <label>Фамилия *<input id="emp-last" maxlength="50" autocomplete="off"></label>
+      </div>
+      <label>Должность<input id="emp-position" maxlength="80" autocomplete="off" placeholder="Например, дизайнер"></label>
+      <div class="form-grid">
+        <label>Логин *<input id="emp-login" maxlength="50" autocomplete="off"></label>
+        <label><span id="emp-password-label">Пароль *</span><input id="emp-password" type="password" minlength="4" autocomplete="new-password"></label>
+      </div>
+      <label>Тип аккаунта
+        <select id="emp-role" class="assignee-select">
+          <option value="executor">Исполнитель — берёт задачи и меняет статус</option>
+          <option value="creator">Руководитель — создаёт, редактирует, удаляет</option>
+        </select>
+      </label>
+      <p id="emp-error" class="form-error"></p>
+      <div class="dialog-actions">
+        <button type="button" id="emp-cancel" class="secondary">Отмена</button>
+        <button type="submit" id="emp-submit" class="primary">Создать</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="viewer" class="viewer" aria-label="Просмотр изображения">
+    <button id="viewer-close" type="button" class="viewer-close" title="Закрыть (Esc)">×</button>
+    <button id="viewer-prev" type="button" class="viewer-nav prev" title="Предыдущее (←)">‹</button>
+    <figure class="viewer-stage">
+      <img id="viewer-img" alt="">
+      <figcaption><span id="viewer-name"></span> <span id="viewer-count" class="viewer-count"></span> <a id="viewer-download" class="viewer-download" download>Скачать</a></figcaption>
+    </figure>
+    <button id="viewer-next" type="button" class="viewer-nav next" title="Следующее (→)">›</button>
+  </dialog>
+  <script src="auth.js"></script>
+  <script src="demo-data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

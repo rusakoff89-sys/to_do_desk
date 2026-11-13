@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тестовое задание для Елены</title>
+  <!-- GitHub Pages не знает адресов /board, /task/42 и т. п. и отдаёт этот файл.
+       Перенаправляем на главную страницу, передавая адрес в ?p=, а index.html восстановит его. -->
+  <script>
+    (function () {
+      var parts = location.pathname.split('/');
+      var onPages = /\.github\.io$/.test(location.hostname);
+      var ROUTES = ['board', 'list', 'task', 'employees', 'help'];
+      var base = onPages && ROUTES.indexOf(parts[1]) === -1 ? '/' + parts[1] : '';
+      var rest = location.pathname.slice(base.length) || '/';
+      location.replace(base + '/?p=' + encodeURIComponent(rest) + location.hash);
+    })();
+  </script>
+</head>
+<body></body>
+</html>
