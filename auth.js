@@ -7,7 +7,7 @@
   const SESSION_KEY = 'todo-session';
   const ROLE_TITLE = { creator: 'Руководитель', executor: 'Исполнитель' };
   const DEFAULTS = [
-    { login: 'admin', password: 'admin123', name: 'Наталья Русакова', role: 'creator', position: 'Руководитель проекта' },
+    { login: 'admin', password: 'admin123', name: 'Наталья Петрова', role: 'creator', position: 'Руководитель проекта' },
     { login: 'alexey', password: '12345', name: 'Алексей Смирнов', role: 'executor', position: 'Frontend-разработчик' },
     { login: 'maria', password: '12345', name: 'Мария Иванова', role: 'executor', position: 'Тестировщик' },
   ];
